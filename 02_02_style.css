@@ -4,6 +4,9 @@
     margin-right: 20px; /* テーブル間の余白 */
 }
 
+body{
+    padding-left: 20px;
+}
 
 button {
     width: 40px;
@@ -27,4 +30,13 @@ button {
 
 #delete{
     width: auto;
+}
+
+#github{
+    width: 40px;
+    height: auto;
+}
+
+.display-7{
+    padding-top: 20px;
 }
