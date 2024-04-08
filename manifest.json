@@ -1,0 +1,29 @@
+{
+    "name": "Auto-SecureMatrix",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "description": "SecureMatrixパスワードを自動入力します。",
+    "icons": {
+        "16": "./img/16.png",
+        "48": "./img/48.png",
+        "128": "./img/128.png"
+    },
+
+
+    "action": {
+        "default_icon": "./img/16.png",
+        "default_popup": "./01_index.html"
+    },
+
+    "options_page": "./02_01_index.html",
+
+    "content_scripts": [{
+        "matches": ["https://aoyama-portal.aoyama.ac.jp/*"],
+        "js": ["./03_content_script.js"]
+      }],
+      
+
+    "permissions": [
+        "storage"
+        ]
+}
