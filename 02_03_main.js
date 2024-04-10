@@ -39,9 +39,9 @@ function submit(){
         }else{
             // chromeStorageはここへ。
             chrome.storage.sync.set({'Auto-SM': submitArray}, function () {});
-            //document.getElementById("inner").innerHTML = "登録しました"
+            document.getElementById("inner").innerHTML = "登録しました"
             //document.getElementById("inner").innerHTML = submitArray
-            window.alert(JSON.stringify(submitArray))
+            //window.alert(JSON.stringify(submitArray))
         }
 
         
@@ -82,7 +82,7 @@ function deleteData(){
 async function restoreData(){
     await chrome.storage.sync.get(['Auto-SM'], function (items) {
         let data = items['Auto-SM'];  // ここを修正
-        window.alert(JSON.stringify(data))
+        //window.alert(JSON.stringify(data))
         if(Object.keys(data).length == 8){
             for(let i = 0; i < 8; i++){
                 // let key = Object.keys(data)[i];
