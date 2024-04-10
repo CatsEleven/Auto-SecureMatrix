@@ -9,7 +9,7 @@ document.getElementById("clear").addEventListener("click", clear)
 document.getElementById("delete").addEventListener("click", deleteData)
 
 // 数字を入れる処理
-count = 0;
+let count = 0;
 function buttonClicked(button) {
     if(!button.textContent){
         count++;
@@ -58,6 +58,7 @@ function clear() {
             document.getElementById(btnId).innerHTML = '';
         }
         document.getElementById("inner").innerHTML = "クリアしました"
+        count = 0;
     }
 }
 
@@ -77,28 +78,49 @@ function deleteData(){
 }
 
 
-// 読み込み時、データ復元
+//読み込み時、データ復元
 async function restoreData(){
     await chrome.storage.sync.get(['Auto-SM'], function (items) {
         let data = items['Auto-SM'];  // ここを修正
+        window.alert(JSON.stringify(data))
         if(Object.keys(data).length == 8){
             for(let i = 0; i < 8; i++){
-                let key = Object.keys(data)[i];
+                // let key = Object.keys(data)[i];
+                // let key = Object.keys(data)[i-1];
+                // キーの情報が、一次元配列で格納される。
+                let keys = Object.keys(data);
+                console.log(keys)
                 //window.alert(JSON.stringify(JSON.stringify(key[i])))
                 //document.getElementById("inner").innerHTML = key[i]
-                if(key){
-                    document.getElementById("btn" + data[i]).innerHTML = Object.keys(data)[i];
+
+                // Object.keys(data)[i];で、連想配列のキーの方を手に入れる
+                // 連想配列のバリューの方は、連想配列[キーの名前]で手に入れる
+                // キーはただの一次元配列（0スタート）だが、連想配列は1スタート
+                if(keys){
+                    document.getElementById("btn" + data[keys[i]]).innerHTML = keys[i];
                 }
             }
         }
     })
 }
 
-function con(){
-    console.log("hello")
-}
+// 読み込み時、データ復元
+// async function restoreData() {
+//     await chrome.storage.sync.get(['Auto-SM'], function (items) {
+//         let data = items['Auto-SM'];
+//         if (Object.keys(data).length == 8) {
+//             for (let key in data) {
+//                 let btnId = "btn" + data[key];
+//                 let button = document.getElementById(btnId);
+//                 if (button) {
+//                     button.innerHTML = key;
+//                 }
+//             }
+//         }
+//     });
+// }
+
 
 window.addEventListener('load',function () {
     restoreData();
-    con();
 })
