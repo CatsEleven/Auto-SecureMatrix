@@ -64,45 +64,19 @@ async function setData(){
             document.getElementById('smxpwd').value = inputText;
             //document.querySelector('input[type="button"][value="OK"]').value = 'AIM';
 
-            // brタグを取得するためにセレクタを使用
-            const brElements = document.querySelectorAll('input[name="SMLOCALE"] + br');
-
-            // 特定のbrタグを取得（2番目のbrタグと想定）
-            const brElement = brElements[1]; // セキュアマトリクスパスワード直後のbr
-
-            if (brElement) {
-            // 新しいp要素を作成
-            const pElement = document.createElement('p');
-            // p要素にテキストを設定
-            pElement.textContent = 'ここに新しいテキストを挿入';
-
-            // brタグを新しいpタグで置き換える
-            brElement.parentNode.replaceChild(pElement, brElement);
+            let brTags = document.querySelectorAll('br');
+            if (brTags.length >= 2) {
+                // 新しい<p>要素を作成
+                const newP = document.createElement('p');
+            
+                // 新しい<p>要素にテキストを設定
+                newP.textContent = inputText;
+            
+                // 2番目の<br>タグを新しい<p>要素で置き換え
+                brTags[1].replaceWith(newP);
+              }
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            window.alert(inputText);
-        }
-}
-
-//addEventListener('load', setData);
 
 if(document.getElementById('smxpwd')){
     addEventListener('load', setData)
