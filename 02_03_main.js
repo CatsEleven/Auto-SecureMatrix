@@ -92,8 +92,8 @@ function deleteData(){
 async function restoreData(){
     await chrome.storage.sync.get(['Auto-SM'], function (items) {
         let data = items['Auto-SM'];  // ここを修正
-
-        if(Object.keys(data).length == 8){
+        if (typeof(data) === 'object' && Object.keys(data).length === 8){
+        // if(Object.keys(data) && Object.keys(data).length == 8){
             for(let i = 0; i < 8; i++){
                 // let key = Object.keys(data)[i];
                 // let key = Object.keys(data)[i-1];
