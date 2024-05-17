@@ -3,21 +3,26 @@ for (let i = 0; i < 64; i++) {
     let btnId = 'btn' + i;
     document.getElementById(btnId).addEventListener('click', function() { buttonClicked(this); });
   }
-
 document.getElementById("submit").addEventListener("click", submit)
 document.getElementById("clear").addEventListener("click", clear)
 document.getElementById("delete").addEventListener("click", deleteData)
+
 
 // 数字を入れる処理
 let count = 0;
 function buttonClicked(button) {
     if(!button.textContent){
-        count++;
-        button.textContent = count;
-        
-    }else{
-        button.textContent = null;
-        count--
+        if (count < 8) {
+            count++;
+            button.textContent = count;
+        }
+    } else {
+        if (0 < count && count < 8 && button.textContent.length ==1) {
+            let left = button.textContent;
+            let right = count + 1;
+            button.textContent = left + '|' + right;
+            count++;
+        }
     }
 }
 
@@ -27,24 +32,28 @@ function submit(){
         let submitArray = {};
         for (let i = 0; i < 64; i++) {
             let btnId = 'btn' + i;
-            //console.log(document.getElementById("1").textContent)
-            // ID：入ってる数字
-            if(document.getElementById(btnId).textContent !== ''){
-                submitArray[String(document.getElementById(btnId).textContent)] = i 
+
+            // ID：textContent（入ってる数字） Value: 数字の入っていた場所のgetElementByID 
+            let content = document.getElementById(btnId).textContent;
+            if(content !== ''){
+                if (content.includes('|')) {
+                    let leftStr = content.substring(0, content.indexOf('|'));
+                    let rightStr = content.substring(content.indexOf('|')+1);
+                    submitArray[String(leftStr)] = i;
+                    submitArray[String(rightStr)] = i;
+                }else{
+                    submitArray[String(content)] = i;
+                }
             }
         }
 
         if(Object.keys(submitArray).length != 8){
-            window.alert('SecureMatrixパスワードは8ケタで入力してください')
+            document.getElementById("inner").innerHTML = 'エラー⚠SecureMatrixパスワードは8ケタで入力してください'
         }else{
             // chromeStorageはここへ。
             chrome.storage.sync.set({'Auto-SM': submitArray}, function () {});
-            document.getElementById("inner").innerHTML = "登録しました"
-            //document.getElementById("inner").innerHTML = submitArray
-            //window.alert(JSON.stringify(submitArray))
+            document.getElementById("inner").innerHTML = "登録しました";
         }
-
-        
     }
 }
 
@@ -52,14 +61,14 @@ function submit(){
 
 // クリアする処理
 function clear() {
-    if (window.confirm("選択された場所をクリアします。よろしいですか？")) {
+    // if (window.confirm("選択された場所をクリアします。よろしいですか？")) {
         for (let i = 0; i < 64; i++) {
             let btnId = 'btn' + i;
             document.getElementById(btnId).innerHTML = '';
         }
         document.getElementById("inner").innerHTML = "クリアしました"
         count = 0;
-    }
+    // }
 }
 
 
@@ -74,6 +83,7 @@ function deleteData(){
         chrome.storage.sync.set({'Auto-SM': ''}, function () {});
         document.getElementById("inner").innerHTML = "登録抹消しました"
     }
+    count = 0;
     
 }
 
@@ -82,7 +92,7 @@ function deleteData(){
 async function restoreData(){
     await chrome.storage.sync.get(['Auto-SM'], function (items) {
         let data = items['Auto-SM'];  // ここを修正
-        //window.alert(JSON.stringify(data))
+
         if(Object.keys(data).length == 8){
             for(let i = 0; i < 8; i++){
                 // let key = Object.keys(data)[i];
@@ -90,37 +100,28 @@ async function restoreData(){
                 // キーの情報が、一次元配列で格納される。
                 let keys = Object.keys(data);
                 console.log(keys)
-                //window.alert(JSON.stringify(JSON.stringify(key[i])))
-                //document.getElementById("inner").innerHTML = key[i]
 
                 // Object.keys(data)[i];で、連想配列のキーの方を手に入れる
                 // 連想配列のバリューの方は、連想配列[キーの名前]で手に入れる
                 // キーはただの一次元配列（0スタート）だが、連想配列は1スタート
+
                 if(keys){
-                    document.getElementById("btn" + data[keys[i]]).innerHTML = keys[i];
+                    if (document.getElementById("btn" + data[keys[i]]).innerHTML) {
+                        let before = document.getElementById("btn" + data[keys[i]]).innerHTML;
+                        let after = keys[i];
+                        document.getElementById("btn" + data[keys[i]]).innerHTML = before + '|' + after;
+                    }else{
+                        document.getElementById("btn" + data[keys[i]]).innerHTML = keys[i];
+                    }    
                 }
+                count ++;
             }
         }
     })
 }
 
-// 読み込み時、データ復元
-// async function restoreData() {
-//     await chrome.storage.sync.get(['Auto-SM'], function (items) {
-//         let data = items['Auto-SM'];
-//         if (Object.keys(data).length == 8) {
-//             for (let key in data) {
-//                 let btnId = "btn" + data[key];
-//                 let button = document.getElementById(btnId);
-//                 if (button) {
-//                     button.innerHTML = key;
-//                 }
-//             }
-//         }
-//     });
-// }
 
-
+// 読み込まれたときに、表示を復元させる
 window.addEventListener('load',function () {
     restoreData();
 })
